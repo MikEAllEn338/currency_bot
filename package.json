@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/MikEAllEn338/currency_bot#readme",
   "dependencies": {
+    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "node-telegram-bot-api": "^0.54.0"
   },
