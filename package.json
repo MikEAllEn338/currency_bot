@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bot": "nodemon bot.js"
+    "bot": "nodemon bot.js",
+    "server":"node app.js",
+    "dev":"nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +21,7 @@
   "dependencies": {
     "axios": "^0.24.0",
     "dotenv": "^10.0.0",
+    "express": "^4.17.1",
     "node-telegram-bot-api": "^0.54.0"
   },
   "devDependencies": {
