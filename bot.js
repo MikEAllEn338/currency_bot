@@ -57,6 +57,7 @@ bot.onText(/\/to (.+)/, (msg, match) => {
     const [currency, count] = match[1].split(" ")
     const res = toCurrency(count, currency.toUpperCase())
     bot.sendMessage(msg.chat.id, `${res}${getSign(currency.toUpperCase())}`)
+    console.log(msg.chat.id)
   } catch (error) {
     console.log(error)
   }
@@ -67,3 +68,4 @@ bot.on('message', (msg) => {
 
   bot.sendMessage(chatId, 'Got it');
 });
+module.exports={bot}
