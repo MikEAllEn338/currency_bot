@@ -1,5 +1,7 @@
 require("dotenv").config()
 
+const {log} = require("./lib/logger")
+
 const TelegramBot = require('node-telegram-bot-api');
 const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
 
@@ -46,7 +48,18 @@ bot.onText(/\/from (.+)/, (msg, match) => {
   try {
     const [currency, count] = match[1].split(" ")
     const res = fromCurrency(count, currency.toUpperCase())
-    bot.sendMessage(msg.chat.id, `${res}${getSign("RUB")}`)
+    const reply = `${res}${getSign("RUB")}`
+    bot.sendMessage(msg.chat.id, reply)
+    log(
+      msg.chat.id,
+      msg.from.id,
+      msg.text
+    )
+    log(
+      msg.chat.id,
+      1,
+      reply
+    )
   } catch (error) {
     console.log(error)
   }
@@ -56,11 +69,26 @@ bot.onText(/\/to (.+)/, (msg, match) => {
   try {
     const [currency, count] = match[1].split(" ")
     const res = toCurrency(count, currency.toUpperCase())
-    bot.sendMessage(msg.chat.id, `${res}${getSign(currency.toUpperCase())}`)
-    console.log(msg.chat.id)
+    const reply = `${res}${getSign(currency.toUpperCase())}`
+    bot.sendMessage(msg.chat.id, reply)
+    log(
+      msg.chat.id,
+      msg.from.id,
+      msg.text
+    )
+    log(
+      msg.chat.id,
+      1,
+      reply
+    )
   } catch (error) {
     console.log(error)
   }
+})
+
+bot.onText(/\/chat (.+)/,(msg, match) => {
+  const [chatId, mes] = match[1].split(" ")
+  bot.sendMessage(chatId, mes)
 })
 
 bot.on('message', (msg) => {
