@@ -1,9 +1,10 @@
 require("dotenv").config()
 
-const {log} = require("./lib/logger")
+const { log } = require("./lib/logger")
 
 const TelegramBot = require('node-telegram-bot-api');
-const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
+const { fromCurrency, toCurrency, getSign } = require("./lib/currency");
+const { getInfo, addId } = require("./lib/room");
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN;
@@ -86,9 +87,35 @@ bot.onText(/\/to (.+)/, (msg, match) => {
   }
 })
 
-bot.onText(/\/chat (.+)/,(msg, match) => {
+bot.onText(/\/chat (.+)/, (msg, match) => {
   const [chatId, mes] = match[1].split(" ")
   bot.sendMessage(chatId, mes)
+})
+
+// /room info
+// /room join <id>
+// /room history <count>
+// /room out
+
+bot.onText(/\/room (.+)/, (msg, match) => {
+  try {
+    const [command] = match[1].split(" ")
+    if (command === "info") {
+      const info = getInfo()
+      let replay = ""
+      for (let room of info) {
+        replay += `room ${room.title} id:${room.id} members:${room.members.length}`
+        replay += "\n"
+      }
+      bot.sendMessage(msg.chat.id, replay)
+    } else if(command==="join"){
+      const [, roomId] = match[1].split(" ")
+      const [success, replay] = addId(msg.chat.id, +roomId)
+      bot.sendMessage(msg.chat.id, replay)
+    }
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 bot.on('message', (msg) => {
@@ -96,4 +123,4 @@ bot.on('message', (msg) => {
 
   bot.sendMessage(chatId, 'Got it');
 });
-module.exports={bot}
+module.exports = { bot }
