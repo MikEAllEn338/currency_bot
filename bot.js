@@ -4,7 +4,8 @@ const { log } = require("./lib/logger")
 
 const TelegramBot = require('node-telegram-bot-api');
 const { fromCurrency, toCurrency, getSign } = require("./lib/currency");
-const { getInfo, addId } = require("./lib/room");
+const { getInfo, addId, checkRoom, remId } = require("./lib/room");
+const { messageTypes } = require("node-telegram-bot-api/src/telegram");
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN;
@@ -110,8 +111,26 @@ bot.onText(/\/room (.+)/, (msg, match) => {
       bot.sendMessage(msg.chat.id, replay)
     } else if(command==="join"){
       const [, roomId] = match[1].split(" ")
+      const curRoom = checkRoom(msg.chat.id)
+      if(curRoom){
+        if(curRoom.id===+roomId){
+          bot.sendMessage(msg.chat.id, "You'r already in this room")
+          return
+        }else{
+          bot.sendMessage(msg.chat.id, `You need to leave room${curRoom.id} to join room${roomId}`)
+          return
+        }
+      }
       const [success, replay] = addId(msg.chat.id, +roomId)
       bot.sendMessage(msg.chat.id, replay)
+    }else if(command=="out"){
+      const curRoom=checkRoom(msg.chat.id)
+      if(!curRoom){
+        bot.sendMessage(msg.chat.id, "You're not in the room")
+      }else{
+        const [, replay] = remId(msg.chat.id, curRoom.id)
+        bot.sendMessage(msg.chat.id, replay)
+      }
     }
   } catch (error) {
     console.log(error)
@@ -120,7 +139,23 @@ bot.onText(/\/room (.+)/, (msg, match) => {
 
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-
-  bot.sendMessage(chatId, 'Got it');
+  console.log(msg)
+  if(msg.text.indexOf("/")===0){
+    return
+  }
+  // bot.sendMessage(chatId, 'Got it. Sending "'+msg.text+'"');
+  const curRoom = checkRoom(msg.chat.id)
+  if(!curRoom){
+    bot.sendMessage(msg.chat.id, "You're not in the room")
+    return
+  }
+  const roomMembers = curRoom.members.filter(member=>member!==msg.chat.id)
+  if(!roomMembers.length){
+    bot.sendMessage(msg.chat.id, "Unfortunately, you're alone here")
+    return
+  }
+  for(let member of roomMembers){
+    bot.sendMessage(member, msg.text)
+  }
 });
 module.exports = { bot }
