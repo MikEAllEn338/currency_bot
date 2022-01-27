@@ -1,11 +1,12 @@
 require("dotenv").config()
 
-const { log } = require("./lib/logger")
+const { log, getLogs } = require("./lib/logger")
 
 const TelegramBot = require('node-telegram-bot-api');
 const { fromCurrency, toCurrency, getSign } = require("./lib/currency");
 const { getInfo, addId, checkRoom, remId } = require("./lib/room");
 const { messageTypes } = require("node-telegram-bot-api/src/telegram");
+const { getName, setName } = require("./lib/members.js");
 
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN;
@@ -93,6 +94,19 @@ bot.onText(/\/chat (.+)/, (msg, match) => {
   bot.sendMessage(chatId, mes)
 })
 
+bot.onText(/\/set (.+)/, (msg,match) => {
+  try{
+    const [command] = match[1].split(" ")
+    if(command==="name"){
+      const [, membName] = match[1].split(" ")
+      setName(msg.chat.id, membName)
+      bot.sendMessage(msg.chat.id, "Your name is "+membName)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+})
+
 // /room info
 // /room join <id>
 // /room history <count>
@@ -131,6 +145,16 @@ bot.onText(/\/room (.+)/, (msg, match) => {
         const [, replay] = remId(msg.chat.id, curRoom.id)
         bot.sendMessage(msg.chat.id, replay)
       }
+    }else if(command=="history"){
+      const curRoom=checkRoom(msg.chat.id)
+      if(!curRoom){
+        bot.sendMessage(msg.chat.id, "You're not in the room")
+      }else{
+        const logs = getLogs(curRoom.id)
+        bot.sendMessage(msg.chat.id, logs.map((log)=>{
+          return `${getName(log.from)}: ${log.text}`
+        }).join("\n"))
+      }
     }
   } catch (error) {
     console.log(error)
@@ -154,8 +178,13 @@ bot.on('message', (msg) => {
     bot.sendMessage(msg.chat.id, "Unfortunately, you're alone here")
     return
   }
+  log(
+    curRoom.id,
+    msg.chat.id,
+    msg.text
+  )
   for(let member of roomMembers){
-    bot.sendMessage(member, msg.text)
+    bot.sendMessage(member, `${getName(msg.chat.id)}: ${msg.text}`)
   }
 });
 module.exports = { bot }
