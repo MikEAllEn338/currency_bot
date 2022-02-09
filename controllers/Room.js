@@ -66,6 +66,13 @@ const message = (bot, msg) => {
     for (let member of roomMembers) {
         bot.sendMessage(member, `${getName(msg.chat.id)}: ${msg.text}`)
     }
+    bot.socket.broadcast.emit("chat", {
+      type: "message",
+      name: getName(msg.chat.id),
+      params: {
+          text: msg.text
+      }
+  });
 }
 
 module.exports = {

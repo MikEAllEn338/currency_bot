@@ -66,12 +66,16 @@ bot.onText(/\/room (.+)/, (msg, match) => {
 })
 
 bot.on('message', (msg) => {
-  const chatId = msg.chat.id;
-  console.log(msg)
-  if (msg.text.indexOf("/") === 0) {
-    return
+  try {
+    const chatId = msg.chat.id;
+    console.log(msg)
+    if (msg.text.indexOf("/") === 0) {
+      return
+    }
+    // bot.sendMessage(chatId, 'Got it. Sending "'+msg.text+'"');
+    RoomController.message(bot, msg)
+  } catch (error) {
+    console.log(error)
   }
-  // bot.sendMessage(chatId, 'Got it. Sending "'+msg.text+'"');
-  RoomController.message(bot, msg)
 });
 module.exports = { bot }
