@@ -1,3 +1,5 @@
+require("./app");
+const RoomController = require("./controllers/Room")
 const app = require("express")();
 const {bot} = require("./bot");
 const server = require("http").Server(app);
@@ -9,7 +11,8 @@ io.on("connection", (socket) => {
   const eventName = "chat";
   socket.on(eventName, (data) => {
     console.log(data);
-    bot.sendMessage(776240166, data.params.text)
+    // bot.sendMessage(776240166, data.params.text)
+    RoomController.adminMessage(bot, data.params.room, data.params.text)
     socket.broadcast.emit(eventName, data);
     socket.emit(eventName, data);
   });

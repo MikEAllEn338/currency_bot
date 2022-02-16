@@ -27,10 +27,25 @@ const addMessage = ({ name, text }) => {
 chatFormEl.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = msgEl.value;
+  const room = roomsEl.value;
   msgEl.value = '';
   socket.emit("chat", {
     type: "message",
     name: userName,
-    params: {text}
+    params: {text, room}
   });
 });
+
+const roomsEl = document.querySelector("#rooms")
+fetch("http://localhost:3000/rooms")
+.then(response => response.json())
+.then(result => {
+  for(let room of result.items){
+    // <option value="1">First</option>
+    const optionEl = document.createElement("option")
+    optionEl.value = room.id
+    optionEl.textContent = `${room.title} (${room.members.length})`
+    roomsEl.append(optionEl)
+  }
+})
+.catch(error => console.log('error', error));

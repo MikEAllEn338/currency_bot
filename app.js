@@ -3,6 +3,7 @@ const express = require("express")
 const app = express()
 const {getLogs} = require("./lib/logger")
 const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
+const { getInfo } = require("./lib/room");
 
 app.use(express.static("public"))
 app.use(express.json())
@@ -29,6 +30,13 @@ app.get("/logs", (req, res)=>{
     console.log(chatId)
     res.json({
         items:getLogs(chatId)
+    })
+})
+
+app.get("/rooms", (req, res)=>{
+    const rooms = getInfo()
+    res.json({
+        items:rooms
     })
 })
 

@@ -1,4 +1,4 @@
-const { getInfo, addId, checkRoom, remId } = require("../lib/room");
+const { getInfo, addId, checkRoom, remId, getRoom } = require("../lib/room");
 const { log, getLogs } = require("../lib/logger")
 const { getName } = require("../lib/members.js");
 
@@ -47,6 +47,14 @@ const history = (bot, chatId) => {
         }).join("\n"))
     }
 }
+
+const adminMessage=(bot, roomId, text)=>{
+    const room = getRoom(+roomId)
+    for (let member of room.members) {
+        bot.sendMessage(member, `Admin: ${text}`)
+    }
+}
+
 const message = (bot, msg) => {
     const curRoom = checkRoom(msg.chat.id)
     if (!curRoom) {
@@ -66,7 +74,7 @@ const message = (bot, msg) => {
     for (let member of roomMembers) {
         bot.sendMessage(member, `${getName(msg.chat.id)}: ${msg.text}`)
     }
-    bot.socket.broadcast.emit("chat", {
+    bot.socket.emit("chat", {
       type: "message",
       name: getName(msg.chat.id),
       params: {
@@ -80,5 +88,6 @@ module.exports = {
     join,
     out,
     history,
-    message
+    message,
+    adminMessage
 }
