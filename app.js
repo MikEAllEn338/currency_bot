@@ -1,24 +1,25 @@
 const {bot} = require("./bot")
+require("./socket")
 const express = require("express")
 const app = express()
 const {getLogs} = require("./lib/logger")
-const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
+// const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
 const { getInfo } = require("./lib/room");
 
 app.use(express.static("public"))
 app.use(express.json())
 
-app.get("/to/:currency/:count", (req, res) => {
-    const {count, currency} = req.params
-    const result = toCurrency(count, currency.toUpperCase())
-    res.send(`${result}${getSign(currency.toUpperCase())}`)
-})
+// app.get("/to/:currency/:count", (req, res) => {
+//     const {count, currency} = req.params
+//     const result = toCurrency(count, currency.toUpperCase())
+//     res.send(`${result}${getSign(currency.toUpperCase())}`)
+// })
 
-app.get("/from/:currency/:count", (req, res) => {
-    const {count, currency} = req.params
-    const result = fromCurrency(count, currency.toUpperCase())
-    res.send(`${result}${getSign("RUB")}`)
-})
+// app.get("/from/:currency/:count", (req, res) => {
+//     const {count, currency} = req.params
+//     const result = fromCurrency(count, currency.toUpperCase())
+//     res.send(`${result}${getSign("RUB")}`)
+// })
 
 app.post("/chats/:chatId/send", (req, res) => {
     bot.sendMessage(req.params.chatId, req.body.message)

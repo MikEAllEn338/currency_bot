@@ -1,40 +1,29 @@
 require("dotenv").config()
 
 const TelegramBot = require('node-telegram-bot-api');
-const { messageTypes } = require("node-telegram-bot-api/src/telegram");
 const { setName } = require("./lib/members.js");
 const RoomController = require("./controllers/Room")
-const CurrencyController = require("./controllers/Currency")
+// const CurrencyController = require("./controllers/Currency")
 
-// replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN;
 
-// Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
 
-// bot.onText(/\/echo (.+)/, (msg, match) => {
+// bot.onText(/\/from (.+)/, (msg, match) => {
+//   try {
+//     CurrencyController.from(bot, msg, match[1].split(" "))
+//   } catch (error) {
+//     console.log(error)
+//   }
+// })
 
-//   const chatId = msg.chat.id;
-//   const resp = match[1];
-
-//   bot.sendMessage(chatId, resp);
-// });
-
-bot.onText(/\/from (.+)/, (msg, match) => {
-  try {
-    CurrencyController.from(bot, msg, match[1].split(" "))
-  } catch (error) {
-    console.log(error)
-  }
-})
-
-bot.onText(/\/to (.+)/, (msg, match) => {
-  try {
-    CurrencyController.to(bot, msg, match[1].split(" "))
-  } catch (error) {
-    console.log(error)
-  }
-})
+// bot.onText(/\/to (.+)/, (msg, match) => {
+//   try {
+//     CurrencyController.to(bot, msg, match[1].split(" "))
+//   } catch (error) {
+//     console.log(error)
+//   }
+// })
 
 bot.onText(/\/set (.+)/, (msg, match) => {
   try {
