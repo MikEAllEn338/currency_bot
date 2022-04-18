@@ -41,6 +41,13 @@ app.get("/rooms", (req, res)=>{
     })
 })
 
+app.get("/rooms/:roomId/logs", (req, res)=>{
+    const logs = getLogs(req.params.roomId)
+    res.json({
+        items:logs
+    })
+})
+
 app.listen(3000, ()=>{
     console.log("Server started on http://localhost:3000")
 })

@@ -37,5 +37,5 @@ roomSelect.addEventListener("change", (event)=>{
         }
     })
     renderRoom(room, wrapperEl)
-
+    fetchMessages(room.id)
 })

@@ -18,15 +18,38 @@ const userName = "Barry";
 
 const addMessage = ({ name, text }) => {
   const newMsgEl = document.createElement("div");
+  newMsgEl.classList.add("toast", "show", "mb-3")
   newMsgEl.innerHTML = `
-    <b>${name}</b> <span>${text}</span>
+  <div class="toast-header">
+      <strong class="me-auto">${name}</strong>
+      <small>11 mins ago</small>
+  </div>
+  <div class="toast-body">
+    ${text}
+  </div>
   `;
   messagesEl.prepend(newMsgEl);
 };
 
+const fetchMessages = (roomId)=>{
+  messagesEl.innerHTML = ""
+  fetch(`http://localhost:3000/rooms/${roomId}/logs`)
+    .then(res=>res.json())
+    .then(data=>{
+      for(let item of data.items){
+        addMessage({name:item.from, text:item.text})
+      }
+    })
+}
+
+fetchMessages(1)
+
 chatFormEl.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = msgEl.value;
+  if(!text){
+    return
+  }
   const room = roomsEl.value;
   msgEl.value = '';
   socket.emit("chat", {
