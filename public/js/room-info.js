@@ -1,23 +1,4 @@
-const rooms = [
-    {
-        title:"Anime",
-        description:"Some talking about anime",
-        img:"/img/rooms/anime.jpg",
-        id:1
-    },
-    {
-        title:"Books",
-        description:"Some talking about books",
-        img:"/img/rooms/book.png",
-        id:2
-    },
-    {
-        title:"Comic books",
-        description:"Some talking about Comic-books",
-        img:"/img/rooms/comic-books.jpg",
-        id:3
-    },
-]
+let rooms = []
 
 const renderRoom = (room, wrapperEl) => {
     const roomEl = document.createElement("div")

@@ -14,7 +14,7 @@ const chatFormEl = document.querySelector("#chat-form");
 const messagesEl = document.querySelector("#messages");
 const msgEl = document.querySelector("#message")
 
-const userName = "Barry";
+const userName = "Admin";
 
 const addMessage = ({ name, text }) => {
   const newMsgEl = document.createElement("div");
@@ -31,23 +31,41 @@ const addMessage = ({ name, text }) => {
   messagesEl.prepend(newMsgEl);
 };
 
-const fetchMessages = (roomId)=>{
+const fetchMessages = (roomId) => {
   messagesEl.innerHTML = ""
   fetch(`http://localhost:3000/rooms/${roomId}/logs`)
-    .then(res=>res.json())
-    .then(data=>{
-      for(let item of data.items){
-        addMessage({name:item.from, text:item.text})
+    .then(res => res.json())
+    .then(data => {
+      for (let item of data.items) {
+        addMessage({ name: item.from, text: item.text })
       }
     })
 }
 
 fetchMessages(1)
 
+const fetchRooms = () => {
+  fetch("http://localhost:3000/rooms")
+  .then(response => response.json())
+  .then(result => {
+    rooms = result.items
+    for (let room of result.items) {
+      const optionEl = document.createElement("option")
+      optionEl.value = room.id
+      optionEl.textContent = `${room.title} (${room.members.length})`
+      roomsEl.append(optionEl)
+    }
+    renderRoom(result.items[0], wrapperEl)
+  })
+  .catch(error => console.log('error', error));
+}
+
+fetchRooms()
+
 chatFormEl.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = msgEl.value;
-  if(!text){
+  if (!text) {
     return
   }
   const room = roomsEl.value;
@@ -55,20 +73,8 @@ chatFormEl.addEventListener("submit", (e) => {
   socket.emit("chat", {
     type: "message",
     name: userName,
-    params: {text, room}
+    params: { text, room }
   });
 });
 
 const roomsEl = document.querySelector("#rooms")
-fetch("http://localhost:3000/rooms")
-.then(response => response.json())
-.then(result => {
-  for(let room of result.items){
-    // <option value="1">First</option>
-    const optionEl = document.createElement("option")
-    optionEl.value = room.id
-    optionEl.textContent = `${room.title} (${room.members.length})`
-    roomsEl.append(optionEl)
-  }
-})
-.catch(error => console.log('error', error));

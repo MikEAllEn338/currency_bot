@@ -5,6 +5,7 @@ const app = express()
 const {getLogs} = require("./lib/logger")
 // const {fromCurrency, toCurrency, getSign} = require("./lib/currency");
 const { getInfo } = require("./lib/room");
+const { getName } = require("./lib/members")
 
 app.use(express.static("public"))
 app.use(express.json())
@@ -44,7 +45,12 @@ app.get("/rooms", (req, res)=>{
 app.get("/rooms/:roomId/logs", (req, res)=>{
     const logs = getLogs(req.params.roomId)
     res.json({
-        items:logs
+        items:logs.map((log)=>{
+            return {
+                ...log,
+                from:getName(log.from)
+            }
+        })
     })
 })
 

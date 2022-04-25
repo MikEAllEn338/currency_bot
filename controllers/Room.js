@@ -1,6 +1,6 @@
 const { getInfo, addId, checkRoom, remId, getRoom } = require("../lib/room");
 const { log, getLogs } = require("../lib/logger")
-const { getName } = require("../lib/members.js");
+const { getName, ID_ADMIN } = require("../lib/members.js");
 
 
 const info = (bot, chatId) => {
@@ -53,6 +53,11 @@ const adminMessage=(bot, roomId, text)=>{
     for (let member of room.members) {
         bot.sendMessage(member, `Admin: ${text}`)
     }
+    log(
+        +roomId,
+        ID_ADMIN,
+        text
+    )
 }
 
 const message = (bot, msg) => {
